@@ -18,9 +18,6 @@ public class MazeViewer {
 		int length = in.nextInt();
 		System.out.println("Width?");
 		int width = in.nextInt();
-		/* System.out.println("Size?");
-		 * int size = in.nextInt();
-		 */
 		int size = 5;
 		in.close();
 		// if the dimensions are impossible to make
@@ -33,7 +30,7 @@ public class MazeViewer {
 		// make the frame close when the red x button is pressed
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// create the maze
-		MazeCreater maze = new MazeCreater(width, length, System.currentTimeMillis(), size);
+		MazeCreater maze = new MazeCreater(length, width, System.currentTimeMillis(), size);
 		maze.createMaze();
 		frame.add(maze);
 		// set the frame dimensions

@@ -3,6 +3,9 @@ import java.awt.*;
 // import the JComponent stuff
 import javax.swing.JComponent;
 
+// allows for keyboard key code constants
+import java.awt.event.KeyEvent;
+
 // Allows for all of the warnings
 import javax.swing.JOptionPane;
 
@@ -19,7 +22,13 @@ public class MazeCreater extends JComponent {
 	
 	// for the location of the JComponent
 	private static final long serialVersionUID = 1L;
-	
+
+	// the maximum allowed maze dimension (in cells)
+	private static final int MAX_DIMENSION = 100;
+
+	// the maximum allowed block size (in pixels)
+	private static final int MAX_BLOCK_SIZE = 15;
+
 	// An enumerator to keep track of directions
 	private enum Pos {Empty, None, Up, Down, Left, Right};
 	
@@ -110,7 +119,6 @@ public class MazeCreater extends JComponent {
 		// sets the starting point
 		g2.setColor(Color.RED);
 		g2.fill(new Rectangle(doubleSize * player.second + size, doubleSize * player.first + size, size, size));
-		//g2.fill(new Rectangle(size, 0, size, size));
 		g2.setColor(Color.BLUE);
 		g2.fill(new Rectangle(length * doubleSize - size, width * doubleSize - size, size, size));
 	} // paintComponent()
@@ -132,7 +140,7 @@ public class MazeCreater extends JComponent {
 			// run until there are no more neighbors
 			while(!neighbors.isEmpty()) {
 				// get a random index for the neighbors
-				int index = Math.abs(generator.nextInt()) % neighbors.size();
+				int index = generator.nextInt(neighbors.size());
 				// checks to make sure that the parent cell is not empty
 				if(maze[cell.first][cell.second] == Pos.Empty) maze[cell.first][cell.second]= neighbors.get(index);
 				// find the position of the given index
@@ -190,19 +198,19 @@ public class MazeCreater extends JComponent {
 	// moves the player in the direction specified
 	public void movePiece(int key) {
 		// up
-		if(key == 38 && player.first != 0 && (maze[player.second][player.first] == Pos.Up || maze[player.second][player.first - 1] == Pos.Down)) {
+		if(key == KeyEvent.VK_UP && player.first != 0 && (maze[player.second][player.first] == Pos.Up || maze[player.second][player.first - 1] == Pos.Down)) {
 			--player.first;
 		} // if
 		// down
-		if(key == 40 && player.first != maze[0].length - 1 && (maze[player.second][player.first] == Pos.Down || maze[player.second][player.first + 1] == Pos.Up)) {
+		if(key == KeyEvent.VK_DOWN && player.first != maze[0].length - 1 && (maze[player.second][player.first] == Pos.Down || maze[player.second][player.first + 1] == Pos.Up)) {
 			++player.first;
 		} // if
 		// left
-		if(key == 37 && player.second != 0 && (maze[player.second][player.first] == Pos.Left || maze[player.second - 1][player.first] == Pos.Right)) {
+		if(key == KeyEvent.VK_LEFT && player.second != 0 && (maze[player.second][player.first] == Pos.Left || maze[player.second - 1][player.first] == Pos.Right)) {
 			--player.second;
 		} // if
 		// right
-		if(key == 39 && player.second != maze.length  - 1 && (maze[player.second][player.first] == Pos.Right || maze[player.second + 1][player.first] == Pos.Left)) {
+		if(key == KeyEvent.VK_RIGHT && player.second != maze.length  - 1 && (maze[player.second][player.first] == Pos.Right || maze[player.second + 1][player.first] == Pos.Left)) {
 			++player.second;
 		} // if
 		// sees if the new location is equal to the end
@@ -210,7 +218,7 @@ public class MazeCreater extends JComponent {
 			Object[] options = {"Reset","New Maze"};
 			Object value = JOptionPane.showInputDialog(null, "Congrats! You finished the maze! Choose whether you want to solve a new maze or reset this maze", "Congrats!", JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			player = new Pair();
-			if(value.equals("New Maze")) {
+			if("New Maze".equals(value)) {
 				seed = System.currentTimeMillis();
 				// initializes a new maze layout
 				maze = new Pos[length][width];
@@ -254,39 +262,39 @@ public class MazeCreater extends JComponent {
 	// resize the height
 	public void resizeHeight(int height) {
 		if(height == width) return;
-		if(height > 100 || height <= 0) {
+		if(height > MAX_DIMENSION || height <= 0) {
 			JOptionPane.showMessageDialog(null, "Error: dimensions too large/small");
 			return;
 		} // if
 		width = height;
 		newMaze();
 	} // resizeHeight()
-	
+
 	// get the height
-	public int height() {
+	public int getMazeHeight() {
 		return width;
-	} // height()
+	} // getMazeHeight()
 	
 	// resize the width
 	public void resizeWidth(int width) {
 		if(width == length) return;
-		if(width > 100 || width <= 0) {
+		if(width > MAX_DIMENSION || width <= 0) {
 			JOptionPane.showMessageDialog(null, "Error: dimensions too large/small");
 			return;
 		} // if
 		length = width;
 		newMaze();
 	} // resizeWidth()
-	
+
 	// get the width
-	public int width() {
+	public int getMazeWidth() {
 		return length;
-	} // width
+	} // getMazeWidth()
 	
 	// resize the square size
 	public void resizeSize(int size) {
-		if(size == this.size) return; 
-		if(size > 15 || size <= 0) {
+		if(size == this.size) return;
+		if(size > MAX_BLOCK_SIZE || size <= 0) {
 			JOptionPane.showMessageDialog(null, "Error: dimensions too large/small");
 			return;
 		} // if
